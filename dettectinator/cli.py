@@ -11,11 +11,12 @@ Some functions and code are taken with permission from the DeTT&CT project (http
 import json
 import sys
 import os
+import glob
 import importlib
 import inspect
 from dettectinator import DettectTechniquesAdministration, DettectDataSourcesAdministration
-from plugins.technique_import import TechniqueBase
-from plugins.datasources_import import DatasourceBase
+from plugins.base.technique import TechniqueBase
+from plugins.base.datasource import DatasourceBase
 from argparse import ArgumentParser, Namespace
 
 
@@ -55,8 +56,9 @@ class CommandLine:
         """
         import_plugins = {}
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'plugins')
-        for module in [x for x in os.listdir(path) if x[-3:] == '.py']:
-            plugin_mod = importlib.import_module('plugins.' + module[:-3])
+        all_modules = glob.glob(f'plugins/*/datasource.py') + glob.glob(f'plugins/*/technique.py')
+        for module in all_modules:
+            plugin_mod = importlib.import_module(module.replace('/', '.')[:-3])
             for name, cls in inspect.getmembers(plugin_mod, inspect.isclass):
                 if ('Technique' in name or 'Datasource' in name) and 'Base' not in name:
                     import_plugins[name] = plugin_mod
