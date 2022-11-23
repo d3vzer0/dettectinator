@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "detectinator"
+version = "1.0.0"
+description = "yes"
+authors = ["Sirius Security"]
+license = "GPL3"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.9.7 || >3.9.7,<3.11"
+requests = "2.28.1"
+"ruamel.yaml" = "0.17.21"
+attackcti = "0.3.7"
+python-dateutil = "2.8.2"
+msal = "1.20.0"
+stix2 = "3.0.1"
+openpyxl = "3.0.10"
+suricataparser = "1.0.0"
+addonfactory-splunk-conf-parser-lib = "0.3.4"
+pandas = "^1.5.2"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^5.0.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
