@@ -18,7 +18,7 @@ class TechniqueCsv(TechniqueBase):
 
     def __init__(self, parameters: dict) -> None:
         super().__init__(parameters)
-        if 'file' not in self._parameters:
+        if "file" not in self._parameters:
             raise Exception('TechniqueCsv: "file" parameter is required.')
 
     @staticmethod
@@ -29,21 +29,23 @@ class TechniqueCsv(TechniqueBase):
         """
         TechniqueBase.set_plugin_params(parser)
 
-        parser.add_argument('--file', help='Path of the csv file to import', required=True)
+        parser.add_argument(
+            "--file", help="Path of the csv file to import", required=True
+        )
 
     def get_data_from_source(self) -> Iterable:
         """
         Gets the use-case/technique data from the source.
         :return: Iterable, yields technique, detection
         """
-        file = self._parameters['file']
+        file = self._parameters["file"]
         print(f'Reading data from "{file}"')
 
         with open(file) as f:
             lines = f.readlines()
 
         for detection in lines:
-            parts = detection.split(',')
+            parts = detection.split(",")
             technique = parts[0].strip()
             use_case = parts[1].strip()
             yield technique, use_case

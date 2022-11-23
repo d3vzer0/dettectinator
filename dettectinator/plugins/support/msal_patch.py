@@ -72,9 +72,8 @@ class PublicClientApplicationPatch(PublicClientApplication):
         # /PATCH
 
         flow = self.client.initiate_device_flow(
-            scope=self._decorate_scope(scopes or []),
-            headers=headers,
-            **kwargs)
+            scope=self._decorate_scope(scopes or []), headers=headers, **kwargs
+        )
         flow[self.DEVICE_FLOW_CORRELATION_ID] = correlation_id
         return flow
 
@@ -99,7 +98,8 @@ class PublicClientApplicationPatch(PublicClientApplication):
         """
         telemetry_context = self._build_telemetry_context(
             self.ACQUIRE_TOKEN_BY_DEVICE_FLOW_ID,
-            correlation_id=flow.get(self.DEVICE_FLOW_CORRELATION_ID))
+            correlation_id=flow.get(self.DEVICE_FLOW_CORRELATION_ID),
+        )
 
         # PATCH
         # Add the supplied headers to the client request id header
@@ -107,17 +107,21 @@ class PublicClientApplicationPatch(PublicClientApplication):
         headers.update(telemetry_context.generate_headers())
         # /PATCH
 
-        response = _clean_up(self.client.obtain_token_by_device_flow(
-            flow,
-            data=dict(
-                kwargs.pop("data", {}),
-                code=flow["device_code"],  # 2018-10-4 Hack:
+        response = _clean_up(
+            self.client.obtain_token_by_device_flow(
+                flow,
+                data=dict(
+                    kwargs.pop("data", {}),
+                    code=flow["device_code"],  # 2018-10-4 Hack:
                     # during transition period,
                     # service seemingly need both device_code and code parameter.
-                claims=_merge_claims_challenge_and_capabilities(
-                    self._client_capabilities, claims_challenge),
+                    claims=_merge_claims_challenge_and_capabilities(
+                        self._client_capabilities, claims_challenge
+                    ),
                 ),
-            headers=headers,
-            **kwargs))
+                headers=headers,
+                **kwargs
+            )
+        )
         telemetry_context.update_telemetry(response)
         return response

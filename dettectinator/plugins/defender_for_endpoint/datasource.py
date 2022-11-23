@@ -9,6 +9,7 @@ License: GPL-3.0 License
 from argparse import ArgumentParser
 from collections.abc import Iterable
 from plugins.base.datasource import DatasourceOssemBase
+import json
 
 
 class DatasourceDefenderEndpoints(DatasourceOssemBase):
@@ -16,11 +17,11 @@ class DatasourceDefenderEndpoints(DatasourceOssemBase):
     Base class for importing use-case/technique data
     """
 
-    __category__ = 'Datasource'
+    __category__ = "Datasource"
 
     def __init__(self, parameters: dict) -> None:
         super().__init__(parameters)
-        self._log_source = 'Microsoft Defender for Endpoint'
+        self._log_source = "Microsoft Defender for Endpoint"
 
     @staticmethod
     def set_plugin_params(parser: ArgumentParser) -> None:
@@ -38,9 +39,11 @@ class DatasourceDefenderEndpoints(DatasourceOssemBase):
         ossem_data = self._get_ossem_data()
 
         for record in ossem_data:
-            action_types = json.loads(record['Filter in Log'].replace('\'', '\"'))
+            action_types = json.loads(record["Filter in Log"].replace("'", '"'))
             if len(action_types) > 0:
                 for action_type in action_types:
-                    yield str(record['Component']).title(), f'{record ["Event Name"]}: {action_type["ActionType"]}'
+                    yield str(
+                        record["Component"]
+                    ).title(), f'{record ["Event Name"]}: {action_type["ActionType"]}'
             else:
-                yield str(record['Component']).title(), record['Event Name']
+                yield str(record["Component"]).title(), record["Event Name"]

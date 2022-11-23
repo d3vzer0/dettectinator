@@ -1,4 +1,3 @@
-
 """
 Dettectinator - The Python library to your DeTT&CT YAML files.
 Authors:
@@ -21,8 +20,8 @@ class DatasourceBase:
     def __init__(self, parameters: dict) -> None:
         self._parameters = parameters
 
-        self._re_include = self._parameters.get('re_include', None)
-        self._re_exclude = self._parameters.get('re_exclude', None)
+        self._re_include = self._parameters.get("re_include", None)
+        self._re_exclude = self._parameters.get("re_exclude", None)
 
     @staticmethod
     def set_plugin_params(parser: ArgumentParser) -> None:
@@ -51,13 +50,17 @@ class DatasourceBase:
                 continue
 
             if datasource not in data_sources.keys():
-                record = {'applicable_to': applicable_to, 'available_for_data_analytics': True, 'products': []}
+                record = {
+                    "applicable_to": applicable_to,
+                    "available_for_data_analytics": True,
+                    "products": [],
+                }
                 data_sources[datasource] = [record]
             else:
                 record = data_sources[datasource][0]
 
-            if product not in record['products']:
-                record['products'].append(product)
+            if product not in record["products"]:
+                record["products"].append(product)
 
         return data_sources
 
@@ -100,10 +103,19 @@ class DatasourceOssemBase(DatasourceBase):
         """
         import pandas
 
-        url = 'https://raw.githubusercontent.com/OTRF/OSSEM-DM/main/use-cases/mitre_attack/attack_events_mapping.csv'
+        url = "https://raw.githubusercontent.com/OTRF/OSSEM-DM/main/use-cases/mitre_attack/attack_events_mapping.csv"
         data = pandas.read_csv(url)
-        data.where(data['Log Source'] == self._log_source, inplace=True)
-        data.dropna(how='all', inplace=True)
-        select = data[['Data Source', 'Component', 'EventID', 'Event Name', 'Filter in Log', 'Audit Category']]
+        data.where(data["Log Source"] == self._log_source, inplace=True)
+        data.dropna(how="all", inplace=True)
+        select = data[
+            [
+                "Data Source",
+                "Component",
+                "EventID",
+                "Event Name",
+                "Filter in Log",
+                "Audit Category",
+            ]
+        ]
         dict_result = select.to_dict(orient="records")
         return dict_result

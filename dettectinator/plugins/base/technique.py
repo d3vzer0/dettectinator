@@ -20,7 +20,7 @@ try:
     from dettectinator.plugins.support.authentication import Azure, Tanium
 except ModuleNotFoundError:
     # When dettectinator is not installed as python library
-    sys.path.append(os.path.dirname(os.path.abspath(__file__).replace('plugins', '')))
+    sys.path.append(os.path.dirname(os.path.abspath(__file__).replace("plugins", "")))
     from plugins.support.authentication import Azure, Tanium
 
 
@@ -36,8 +36,8 @@ class TechniqueBase:
     def __init__(self, parameters: dict) -> None:
         self._parameters = parameters
 
-        self._re_include = self._parameters.get('re_include', None)
-        self._re_exclude = self._parameters.get('re_exclude', None)
+        self._re_include = self._parameters.get("re_include", None)
+        self._re_exclude = self._parameters.get("re_exclude", None)
 
     @staticmethod
     def set_plugin_params(parser: ArgumentParser) -> None:
@@ -45,8 +45,12 @@ class TechniqueBase:
         Set command line arguments specific for the plugin
         :param parser: Argument parser
         """
-        parser.add_argument('-l', '--location_prefix',
-                            help='Location of the detection, will be prepended to the detection name.', default='')
+        parser.add_argument(
+            "-l",
+            "--location_prefix",
+            help="Location of the detection, will be prepended to the detection name.",
+            default="",
+        )
 
     def get_attack_techniques(self, applicable_to: list, location_prefix: str) -> dict:
         """
@@ -68,11 +72,13 @@ class TechniqueBase:
                 continue
 
             if use_case in use_cases.keys():
-                use_cases[use_case]['techniques'].append(technique)
+                use_cases[use_case]["techniques"].append(technique)
             else:
-                use_cases[use_case] = {'applicable_to': applicable_to,
-                                       'location_prefix': location_prefix,
-                                       'techniques': [technique]}
+                use_cases[use_case] = {
+                    "applicable_to": applicable_to,
+                    "location_prefix": location_prefix,
+                    "techniques": [technique],
+                }
 
         return use_cases
 

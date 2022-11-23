@@ -14,7 +14,6 @@ from xml.etree.ElementTree import Element
 import xml.etree.ElementTree as ElementTree
 
 
-
 class DatasourceWindowsSysmon(DatasourceOssemBase):
     """
     Base class for importing use-case/technique data
@@ -23,11 +22,13 @@ class DatasourceWindowsSysmon(DatasourceOssemBase):
     def __init__(self, parameters: dict) -> None:
         super().__init__(parameters)
 
-        if 'sysmon_config' not in self._parameters:
-            raise Exception('DatasourceWindowsSysmon: "sysmon_config" parameter is required.')
+        if "sysmon_config" not in self._parameters:
+            raise Exception(
+                'DatasourceWindowsSysmon: "sysmon_config" parameter is required.'
+            )
 
-        self._sysmon_config = parameters['sysmon_config']
-        self._log_source = 'Microsoft-Windows-Sysmon'
+        self._sysmon_config = parameters["sysmon_config"]
+        self._log_source = "Microsoft-Windows-Sysmon"
 
     @staticmethod
     def set_plugin_params(parser: ArgumentParser) -> None:
@@ -35,7 +36,9 @@ class DatasourceWindowsSysmon(DatasourceOssemBase):
         Set command line arguments specific for the plugin
         :param parser: Argument parser
         """
-        parser.add_argument('--sysmon_config', help='Path of the Sysmon config file.', required=True)
+        parser.add_argument(
+            "--sysmon_config", help="Path of the Sysmon config file.", required=True
+        )
 
     def get_data_from_source(self) -> Iterable:
         """
@@ -51,10 +54,15 @@ class DatasourceWindowsSysmon(DatasourceOssemBase):
             # If the is an event type with an onmatch == include attribute without child items this means
             # that nothing is being logged for this event type
             for config_item in config_items:
-                if config_item.attrib['onmatch'] == "include" and len(config_item.getchildren()) == 0:
+                if (
+                    config_item.attrib["onmatch"] == "include"
+                    and len(config_item.getchildren()) == 0
+                ):
                     continue
 
-            yield str(record['Component']).title(), f'{record["EventID"]}: {record["Event Name"]}'
+            yield str(
+                record["Component"]
+            ).title(), f'{record["EventID"]}: {record["Event Name"]}'
 
     def _get_sysmon_config(self) -> Element:
         """

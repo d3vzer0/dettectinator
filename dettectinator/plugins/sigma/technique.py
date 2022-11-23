@@ -12,7 +12,6 @@ from plugins.base.technique import TechniqueBase
 import os
 
 
-
 class TechniqueSigmaRules(TechniqueBase):
     """
     Import data from a folder with Sigma rules.
@@ -20,7 +19,7 @@ class TechniqueSigmaRules(TechniqueBase):
 
     def __init__(self, parameters: dict) -> None:
         super().__init__(parameters)
-        if 'folder' not in self._parameters:
+        if "folder" not in self._parameters:
             raise Exception('DetectionSigmaRules: "folder" parameter is required.')
 
     @staticmethod
@@ -31,17 +30,21 @@ class TechniqueSigmaRules(TechniqueBase):
         """
         TechniqueBase.set_plugin_params(parser)
 
-        parser.add_argument('--folder', help='Path of the folder with Sigma rules to import', required=True)
+        parser.add_argument(
+            "--folder",
+            help="Path of the folder with Sigma rules to import",
+            required=True,
+        )
 
     def get_data_from_source(self) -> Iterable:
         """
         Gets the use-case/technique data from the source.
         :return: Iterable, yields technique, detection
         """
-        folder = self._parameters['folder']
+        folder = self._parameters["folder"]
 
         if not os.path.isdir(folder):
-            raise Exception(f'Folder does not exist: {folder}')
+            raise Exception(f"Folder does not exist: {folder}")
 
         from ruamel.yaml import YAML
 
@@ -49,17 +52,18 @@ class TechniqueSigmaRules(TechniqueBase):
 
         for root, _, files in os.walk(folder):
             for file in files:
-                if file.endswith('.yaml') or file.endswith('.yml'):
+                if file.endswith(".yaml") or file.endswith(".yml"):
                     filename = os.path.join(root, file)
                     yaml = YAML()
                     try:
-                        with open(filename, 'r') as yaml_file:
+                        with open(filename, "r") as yaml_file:
                             yaml_content = yaml.load(yaml_file)
                     except Exception as e:
-                        raise Exception(f'Failed loading YAML file "{filename}". Error: {str(e)}') from e
+                        raise Exception(
+                            f'Failed loading YAML file "{filename}". Error: {str(e)}'
+                        ) from e
 
-                    if 'tags' in yaml_content.keys():
-                        for tag in yaml_content['tags']:
-                            if tag.startswith('attack.t'):
-                                yield tag[7:].upper(), yaml_content['title']
-
+                    if "tags" in yaml_content.keys():
+                        for tag in yaml_content["tags"]:
+                            if tag.startswith("attack.t"):
+                                yield tag[7:].upper(), yaml_content["title"]

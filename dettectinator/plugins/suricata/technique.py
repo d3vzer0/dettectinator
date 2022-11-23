@@ -10,6 +10,7 @@ from argparse import ArgumentParser
 from collections.abc import Iterable
 from plugins.base.technique import TechniqueBase
 
+
 class TechniqueSuricataRules(TechniqueBase):
     """
     Import data from a Suricata rules file. It expects a metadata meta-setting containing a field with the name
@@ -27,7 +28,7 @@ class TechniqueSuricataRules(TechniqueBase):
 
     def __init__(self, parameters: dict) -> None:
         super().__init__(parameters)
-        if 'file' not in self._parameters:
+        if "file" not in self._parameters:
             raise Exception('DetectionSuricateRules: "file" parameter is required.')
 
     @staticmethod
@@ -38,26 +39,31 @@ class TechniqueSuricataRules(TechniqueBase):
         """
         TechniqueBase.set_plugin_params(parser)
 
-        parser.add_argument('--file', help='Path of the Suricate rules file to import', required=True)
+        parser.add_argument(
+            "--file", help="Path of the Suricate rules file to import", required=True
+        )
 
     def get_data_from_source(self) -> Iterable:
         """
         Gets the use-case/technique data from the source.
         :return: Iterable, yields technique, detection
         """
-        file = self._parameters['file']
+        file = self._parameters["file"]
         print(f'Reading data from "{file}"')
 
         from suricataparser import parse_file
+
         rules = parse_file(file)
 
         for rule in rules:
             if rule.enabled:
                 for option in rule.options:
-                    if option.name == 'metadata':
-                        meta_data = self._convert_metadata_list_to_dict(option.value.data)
-                        if 'mitre_technique_id' in meta_data.keys():
-                            yield meta_data['mitre_technique_id'], rule.msg
+                    if option.name == "metadata":
+                        meta_data = self._convert_metadata_list_to_dict(
+                            option.value.data
+                        )
+                        if "mitre_technique_id" in meta_data.keys():
+                            yield meta_data["mitre_technique_id"], rule.msg
 
     @staticmethod
     def _convert_metadata_list_to_dict(meta_data: list) -> dict:
@@ -66,6 +72,6 @@ class TechniqueSuricataRules(TechniqueBase):
         """
         meta_data_dict = {}
         for item in meta_data:
-            splitted = item.split(' ')
+            splitted = item.split(" ")
             meta_data_dict[splitted[0]] = splitted[1]
         return meta_data_dict

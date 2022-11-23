@@ -18,7 +18,7 @@ class TechniqueExcel(TechniqueBase):
 
     def __init__(self, parameters: dict) -> None:
         super().__init__(parameters)
-        if 'file' not in self._parameters:
+        if "file" not in self._parameters:
             raise Exception('DetectionExcel: "file" parameter is required.')
 
     @staticmethod
@@ -29,22 +29,25 @@ class TechniqueExcel(TechniqueBase):
         """
         TechniqueBase.set_plugin_params(parser)
 
-        parser.add_argument('--file', help='Path of the Excel file to import', required=True)
+        parser.add_argument(
+            "--file", help="Path of the Excel file to import", required=True
+        )
 
     def get_data_from_source(self) -> Iterable:
         """
         Gets the use-case/technique data from the source.
         :return: Iterable, yields technique, detection
         """
-        file = self._parameters['file']
+        file = self._parameters["file"]
         print(f'Reading data from "{file}"')
 
         import openpyxl
+
         wb = openpyxl.load_workbook(filename=file, data_only=True)
         sheet = wb.worksheets[0]
 
         for rowNumber in range(2, sheet.max_row + 1):
             techniques = sheet.cell(row=rowNumber, column=1).value
             detection = sheet.cell(row=rowNumber, column=2).value
-            for technique in techniques.split(','):
+            for technique in techniques.split(","):
                 yield technique.strip(), detection
