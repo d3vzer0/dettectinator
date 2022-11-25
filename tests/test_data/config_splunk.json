@@ -1,0 +1,10 @@
+[
+    {
+        "log_source": "Auditing|Eventlog|Firewall|WMI",
+        "query": "index=main OR index=security OR index=systems source=\"*WinEventLog*\" |stats count by signature_id, category"
+    },
+    {
+        "log_source": "cloudtrail",
+        "query": "index=systems sourcetype=aws:cloudtrail|stats count by eventName, eventType"
+    }
+]
